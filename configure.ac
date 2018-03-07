@@ -1,6 +1,6 @@
 # Initialization
 AC_PREREQ([2.69])
-AC_INIT([openpower-host-ipmi-oem], [1.0], [https://github.com/openbmc/openpower-host-ipmi-oem/issues])
+AC_INIT([qualcomm-ipmi-oem], [1.0], [https://github.com/openbmc/qualcomm-ipmi-oem/issues])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror foreign dist-xz])
 AM_SILENT_RULES([yes])
