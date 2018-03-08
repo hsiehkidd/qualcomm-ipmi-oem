@@ -12,6 +12,13 @@ To full clean the repository again run `./bootstrap.sh clean`.
 ```
 
 ## Supported Commands
-- Partial Add
-- Prepare for host update
-
+- Set Boot Mode
+- Get Boot Mode
+- Get Pcie Slot Status
+- Get BMC Vendor
+- Get Fan PWM
+- Set Fan Speed
+- Node ID Detection
+- Board ID Detection
+- Send SoC MAC
+- Get Platform MAC

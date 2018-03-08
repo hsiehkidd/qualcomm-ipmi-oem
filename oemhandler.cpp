@@ -36,13 +36,11 @@ ipmi_ret_t ipmi_arm_oem_get_pcie_slot_status(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     char respptr[1];
     *data_len = 2;
     ipmi_ret_t ipmi_rc = IPMI_CC_OK;
-    
+
     type_info = (char*) malloc (sizeof(char*)*4);
-    
-    printf("pcie slot status \n");
+
     if (reqptr[0] == 0)
     {
-        printf("slot 1 \n");
         fp = fopen(PCIE_SLOT_1_EEPROM_PATH,"r");
         if(fp == NULL) {
             printf("fail to open file");
@@ -50,9 +48,8 @@ ipmi_ret_t ipmi_arm_oem_get_pcie_slot_status(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         } else {
             fseek(fp, 39, SEEK_SET);
             fread(type_info,1,4,fp);
-            printf("type info %s\n",type_info); 
             switch(type_info[3]) {
-                case '0': //P950
+                case '0':
                     fp = fopen(M2_EEPROM_PATH,"r");
                     if(fp == NULL) {
                          printf("fail to open file");
@@ -61,22 +58,22 @@ ipmi_ret_t ipmi_arm_oem_get_pcie_slot_status(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                          respptr[0] = 0xFA;
                     }
                     break;
-                case '1': //P951
+                case '1':
                     respptr[0] = 0x02;
                 break;
-                case '2': //P952
+                case '2':
                     respptr[0] = 0x03;
                 break;
-                case '3': //P953
+                case '3':
                     respptr[0] = 0x04;
                 break;
-                case '4': //P954
+                case '4':
                     respptr[0] = 0x05;
                 break;
-                case '6': //P956
+                case '6':
                     respptr[0] = 0x06;
                 break;
-                case '7': //P957
+                case '7':
                     respptr[0] = 0x07;
                 break;
                 default:
@@ -84,7 +81,6 @@ ipmi_ret_t ipmi_arm_oem_get_pcie_slot_status(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
              }
         }
     } else if (reqptr[0] == 1) {
-        printf("slot 2 \n");
         fp = fopen(PCIE_SLOT_2_EEPROM_PATH,"r");
         if(fp == NULL) {
             printf("fail to open file\n");
@@ -92,27 +88,26 @@ ipmi_ret_t ipmi_arm_oem_get_pcie_slot_status(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         } else {
             fseek(fp, 39, SEEK_SET);
             fread(type_info,1,4,fp);
-            printf("type info %s\n",type_info); 
             switch(type_info[3]) {
-                case '0': //P950
+                case '0':
                     respptr[0] = 0x01;
                 break;
-                case '1': //P951
+                case '1':
                     respptr[0] = 0x02;
                 break;
-                case '2': //P952
+                case '2':
                     respptr[0] = 0x03;
                 break;
-                case '3': //P953
+                case '3':
                     respptr[0] = 0x04;
                 break;
-                case '4': //P954
+                case '4':
                     respptr[0] = 0x05;
                 break;
-                case '6': //P956
+                case '6':
                     respptr[0] = 0x06;
                 break;
-                case '7': //P957
+                case '7':
                     respptr[0] = 0x07;
                 break;
                 default:
@@ -120,7 +115,7 @@ ipmi_ret_t ipmi_arm_oem_get_pcie_slot_status(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
             }
         }
     } else {
-        ipmi_rc = IPMI_CC_PARM_OUT_OF_RANGE; //Wrong command data
+        ipmi_rc = IPMI_CC_PARM_OUT_OF_RANGE;
     }
     memcpy(response, respptr, *data_len);
     return ipmi_rc;
@@ -156,29 +151,13 @@ ipmi_ret_t ipmi_arm_oem_get_node_id_detection(ipmi_netfn_t netfn, ipmi_cmd_t cmd
 {
 
     FILE *fp;
- //   FILE *fp1;
-    char config[8] = {0};//use to transform string to int
+    char config[8] = {0};
     int cnt = 0;
     char respptr[1];
     *data_len = 2;
     ipmi_ret_t ipmi_rc = IPMI_CC_OK;
 
     fp = fopen(GPIOG1FIlE, "r");
-#if 0
-    if(fp == NULL) {
-        fp1 = fopen(EXPORTGPIO,"wb");
-
-        if(fp1 == NULL) {
-            printf("erro to access export gpio file\n");
-            return -1;
-        }
-
-        fprintf(fp1, "329");     //export gpio G1
-        fclose(fp1);
-        printf("initial gpio \n");
-    }
-    fclose(fp);
-#endif
     fp = fopen(GPIOG1FIlE, "r");
     if (fp == NULL) {
             respptr[0] = 0x00;
@@ -187,8 +166,6 @@ ipmi_ret_t ipmi_arm_oem_get_node_id_detection(ipmi_netfn_t netfn, ipmi_cmd_t cmd
     fgets(config,8,fp);
     cnt += atoi(config);
     fclose(fp);
-
-    printf("cnt %d\n", cnt);
 
     if (cnt == 0) {
            respptr[0] = 0x00;
@@ -204,31 +181,14 @@ ipmi_ret_t ipmi_arm_oem_get_broad_id_detection(ipmi_netfn_t netfn, ipmi_cmd_t cm
                               ipmi_request_t request, ipmi_response_t response,
                               ipmi_data_len_t data_len, ipmi_context_t context)
 {
-//    FILE *fp;
     FILE *fp1;
     FILE *fp2;
     FILE *fp3;
-    char config[8] = {0};//use to transform string to int
+    char config[8] = {0};
     int cnt = 0;
     char respptr[1];
     *data_len = 2;
     ipmi_ret_t ipmi_rc = IPMI_CC_OK;
-#if 0
-    fp1 = fopen(GPIOP4FIlE, "r");
-    if(fp1 == NULL) {
-	system("echo 404 > /sys/class/gpio/export");
-        fp = fopen(EXPORTGPIO,"wb");
-        if(fp == NULL) {
-            printf("erro to access export gpio file\n");
-            return -1;
-        }
-        fprintf(fp, "404");     //export gpio P4
-        fclose(fp);
-        printf("initial gpio \n");
-
-    }
-    fclose(fp1);
-#endif
     fp1 = fopen(GPIOP4FIlE, "r");
     if (fp1 == NULL) {
         cnt += 0xf;
@@ -239,19 +199,6 @@ ipmi_ret_t ipmi_arm_oem_get_broad_id_detection(ipmi_netfn_t netfn, ipmi_cmd_t cm
         cnt += atoi(config);
     }
     fclose(fp1);
-#if 0
-    fp2 = fopen(GPIOP5FIlE, "r");
-    if(fp2 == NULL) {
-        fp = fopen(EXPORTGPIO,"wb");
-        if(fp == NULL) {
-            printf("erro to access export gpio file\n");
-            return -1;
-        }
-        fprintf(fp, "405");     //export gpio P5
-        fclose(fp);
-    }
-    fclose(fp2);
-#endif
     fp2 = fopen(GPIOP5FIlE, "r");
     if (fp2 == NULL) {
         cnt += 0xf;
@@ -262,20 +209,6 @@ ipmi_ret_t ipmi_arm_oem_get_broad_id_detection(ipmi_netfn_t netfn, ipmi_cmd_t cm
         cnt += atoi(config);
     }
     fclose(fp2);
-#if 0
-    fp3 = fopen(GPIOP6FIlE, "r");
-    if(fp == NULL) {
-        fp = fopen(EXPORTGPIO,"wb");
-        if(fp == NULL) {
-            printf("erro to access export gpio file\n");
-            return -1;
-        }
-        fprintf(fp, "406");     //export gpio P5
-        fclose(fp);
-        printf("initial gpio \n");
-    }
-    fclose(fp3);
-#endif
     fp3 = fopen(GPIOP6FIlE, "r");
     if (fp3 == NULL) {
         cnt += 0xf;
@@ -286,9 +219,7 @@ ipmi_ret_t ipmi_arm_oem_get_broad_id_detection(ipmi_netfn_t netfn, ipmi_cmd_t cm
         cnt += atoi(config);
     }
     fclose(fp3);
-    printf("cnt %d\n", cnt);
 
-    printf("test point 3 \n");
     if(cnt == 0)
         respptr[0] = 0x00;
     else if (cnt == 1)
@@ -315,7 +246,6 @@ ipmi_ret_t ipmi_arm_oem_send_soc_mac(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     int i;
     int c = 0;
 
-    printf("Received SOC MAC\n");
     for(i=0; i < 12; i++)
     {
          if(( i == 5)||(i == 11))
@@ -349,7 +279,6 @@ ipmi_ret_t ipmi_arm_oem_send_platform_mac(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     int i;
     int c = 0;
 
-    printf("Received PLATFORM MAC\n");
     for(i=0; i < 18; i++)
     {
          if(( i == 5)||(i == 11)||(i == 17))
@@ -388,12 +317,13 @@ ipmi_ret_t ipmi_qdt_oem_set_boot_mode(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 	{
 		return IPMI_CC_PARM_OUT_OF_RANGE;
 	}
-	sprintf(command,"/usr/bin/bootmodeutil -w %x %x %x %x %x %x",reqptr[0],reqptr[1],reqptr[2],reqptr[3],reqptr[4],reqptr[5]);
+	sprintf(command,"/usr/bin/bootmodeutil -w %x %x %x %x %x %x",
+		reqptr[0],reqptr[1],reqptr[2],reqptr[3],reqptr[4],reqptr[5]);
 	rc=system(command);
 	rc = WEXITSTATUS(rc);
-    	if (rc != 0) {
-        	return IPMI_CC_UNSPECIFIED_ERROR;
-   	}
+	if (rc != 0) {
+		return IPMI_CC_UNSPECIFIED_ERROR;
+	}
 	res[0]=reqptr[0];
 	res[1]=reqptr[1];
 	res[2]=reqptr[2];
@@ -428,15 +358,15 @@ ipmi_ret_t ipmi_qdt_oem_get_boot_mode(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 	{
 		for(i = 3; i < 6; i++)
 		{
-            		fscanf(fp, "%s", buff);
+			fscanf(fp, "%s", buff);
 			res[i]=strtol(buff,NULL,16);
 		}
 		memcpy(response, res, sizeof(res));
 		*data_len=6;
-    	}else {
-        	printf("can not open the file\n");
+	}else {
+		printf("can not open the file\n");
 		return 0xC3;
-    	}
+	}
 	fclose(fp);
 	return ipmi_rc;
 }
@@ -491,7 +421,7 @@ ipmi_ret_t ipmi_arm_oem_set_fan_speed(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                         if(node_num == 1)
                         {
                                 fp = fopen(NODE1HW1PWM,"w");
-                                if(fp != NULL)
+				if(fp != NULL)
                             	{
 					buff1=reqptr[1];
                                         sprintf(buff,"%d",buff1);
@@ -582,15 +512,15 @@ ipmi_ret_t ipmi_arm_oem_get_fan_pwm(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 			{
 				fp = fopen(NODE0HW1PWM,"r");
 				if(fp != NULL)
-        			{
-                			fscanf(fp, "%s", buff);
-                			res[0]=strtol(buff,NULL,10);
-       				}
+				{
+					fscanf(fp, "%s", buff);
+					res[0]=strtol(buff,NULL,10);
+				}
 				else
-       				{
-               				printf("can not open the file\n");
+				{
+					printf("can not open the file\n");
 					return 0xC3;
-       				}
+				}
 				fclose(fp);
 			}
 			if(node_num == 1)
@@ -606,7 +536,7 @@ ipmi_ret_t ipmi_arm_oem_get_fan_pwm(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                         printf("can not open the file\n");
 					return 0xC3;
                                 }
-				fclose(fp);	
+				fclose(fp);
 			}
 			break;
 		case 0x02:
@@ -644,7 +574,7 @@ ipmi_ret_t ipmi_arm_oem_get_fan_pwm(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                 default:
                         return IPMI_CC_PARM_OUT_OF_RANGE;
         }
-	
+
 	memcpy(response, res, *data_len);
         return ipmi_rc;
 }

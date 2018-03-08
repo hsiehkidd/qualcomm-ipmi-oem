@@ -9,7 +9,7 @@ enum ipmi_net_fns_oem
 enum ipmi_net_fns_oem_cmds
 {
     IPMI_CMD_SET_BOOT_MODE = 0xC2,
-    IPMI_CMD_GET_BOOT_MODE = 0xC3,	
+    IPMI_CMD_GET_BOOT_MODE = 0xC3,
 };
 
 enum ipmi_netfn_none_cmds
